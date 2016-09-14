@@ -25,7 +25,6 @@ class Catalog extends Component {
           })
         )
 
-    console.log(cancelablePromise);
     cancelablePromise
       .promise
       .then(() => console.log('resolved'))
@@ -35,7 +34,6 @@ class Catalog extends Component {
 
   componentWillUnmount() {
     this.state.cancelablePromise.cancel(); // Cancel the promise
-    console.log('componentWillUnmount => ', this.state.cancelablePromise)
   }
 
   render() {
