@@ -3,26 +3,39 @@ import { Link } from 'react-router'
 import LastHarvesting from '../LastHarvesting/LastHarvesting'
 import Statistics from '../Statistics/Statistics'
 import Percent from '../Statistics/Percent/Percent'
+import { makeCancelable } from '../tools.js'
 import './Catalog.css'
 
 class Catalog extends Component {
   constructor(props) {
     super(props)
     this.state = {metrics: undefined}
-    this.getMetrics()
   }
 
-  getMetrics() {
-    if (!this.state.metrics) {
-      return fetch(`https://inspire.data.gouv.fr/api/geogw/catalogs/${this.props.catalog.id}/metrics`)
-        .then((response) => response.json())
-        .then((metrics) => {
-          this.setState({metrics})
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-      }
+  componentDidMount() {
+    let cancelablePromise = makeCancelable(
+
+        fetch(`https://inspire.data.gouv.fr/api/geogw/catalogs/${this.props.catalog.id}/metrics`)
+          .then((response) => response.json())
+          .then((metrics) => {
+            this.setState({metrics})
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+        )
+
+    console.log(cancelablePromise);
+    cancelablePromise
+      .promise
+      .then(() => console.log('resolved'))
+      .catch((reason) => console.log('isCanceled', reason.isCanceled))
+    this.setState({cancelablePromise})
+  }
+
+  componentWillUnmount() {
+    this.state.cancelablePromise.cancel(); // Cancel the promise
+    console.log('componentWillUnmount => ', this.state.cancelablePromise)
   }
 
   render() {
