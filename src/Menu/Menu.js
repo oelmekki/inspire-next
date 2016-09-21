@@ -1,24 +1,45 @@
-import React from 'react'
+import React, { Component } from 'react'
+import SidebarMenu from '../SidebarMenu/SidebarMenu'
+import MenuItem from './MenuItem/MenuItem'
 import './Menu.css'
 
-const Menu = () => {
-  return (
-    <div className="ui container">
-      <div className="ui large secondary inverted pointing menu">
-        <a className="toc item">
-          <i className="sidebar icon"></i>
-        </a>
-        <a className="active item">Home</a>
-        <a className="item">Work</a>
-        <a className="item">Company</a>
-        <a className="item">Careers</a>
-        <div className="right item">
-          <a className="ui inverted button">Log in</a>
-          <a className="ui inverted button">Sign Up</a>
+class Menu extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      sidebar: false,
+      items: ['Home', 'Catalogs']
+    }
+    this.showSidebarMenu = this.showSidebarMenu.bind(this)
+  }
+
+  showSidebarMenu() {
+    this.setState({sidebar: !this.state.sidebar})
+  }
+
+  render() {
+    return (
+      <div id="menu" className="ui container">
+        <SidebarMenu visible={this.state.sidebar} items={this.state.items} location={this.props.location} />
+        <div className="ui large secondary inverted pointing menu">
+          <a className="toc item" onClick={this.showSidebarMenu}>
+            <i className="sidebar icon"></i>
+          </a>
+          {this.state.items.map((item, idx) => <MenuItem key={idx} name={item} location={this.props.location} />)}
+
+          <div className="right menu">
+            <div className="item">
+              <div className="ui icon input">
+                <input type="text" placeholder="Search..."/>
+                <i className="search link icon"></i>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default Menu
